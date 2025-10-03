@@ -24,22 +24,12 @@ def clustal_align(infile, outfile, outfileFA):
     outFA = AlignIO.convert(outfile, "clustal", outfileFA, "fasta")
     return outFA
 
-#def convert_alignment(outfile, outfileFA) :
-#    outFA = AlignIO.convert(outfile, "clustal", outfileFA, "fasta")
-#    return outFA
-
-#  subprocess.run(["/home/sara/Downloads/clustalw-2.1-linux-x86_64-libcppstatic/clustalw2", "-infile=/home/sara/GITHUB/Biopython_helper_scripts/sample_fasta.fa", "-outfile=/home/sara/GITHUB/Biopython_helper_scripts/aligned.aln"])
-#    # Convert Alignment file to Fasta
-#    AlignIO.convert("/home/sara/GITHUB/Biopython_helper_scripts/aligned.aln", "clustal", "/home/sara/GITHUB/Biopython_helper_scripts/aligned.fa", "fasta")
-
-
 # View Aligned Sequences
-alignment = AlignIO.read("/home/sara/GITHUB/Biopython_helper_scripts/aligned.fa", "fasta")
-print(alignment)
-for record in alignment:
-    print(f"Sequence ID: {record.id}, Sequence: {record.seq}")
+# alignment = AlignIO.read("/home/sara/GITHUB/Biopython_helper_scripts/aligned.fa", "fasta")
+# print(alignment)
+# for record in alignment:
+#    print(f"Sequence ID: {record.id}, Sequence: {record.seq}")
 
-# second find divergence against a reference and have many if/then statements to conclude with label
 # LOAD REFERENCES
 refX4 = SeqRecord(
                 Seq("TRPNNNTRKSIRIQRGPGRAFVTIGKI-GNMRQAHCNISRAKWNATLKQIASKLREQFGNNKTIIFKQSSGGDPEI"),
@@ -136,15 +126,20 @@ if __name__ == "__main__":
     outfileFA = str(sys.argv[3])
     leng = int(sys.argv[4])
 
+    # align sequences
     clustal_align(records, outfile, outfileFA)
+    # List sequences and list nucleotides within sequences
     fasta = list_sequences(outfileFA, leng)
     listed_seqs = list_list_sequences(fasta)
+    # Adjust for any discrepancies between length of seqs and references by adding blanks to references
     max_len = max(len(sublist) for sublist in listed_seqs)
     while len(x4) < max_len:
         x4.append("-")
     while len(r5) < max_len:
         r5.append("-")
+    # Compare Sequences by scoring alignments to reference and determining tropism
     annotation = annotate_seqs(listed_seqs)
+    # Collect Sequence IDs to create dictionary
     seq_ids = get_seq_ids(fasta)
 
     # create dictionary using the list of sequence IDs and the designated annotations
